@@ -81,11 +81,6 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        val bag = CubicSample(mapOf(
-            "red" to 12,
-            "green" to 13,
-            "blue" to 14
-        ))
         return input.map {
             val game = CubicGame.create(it)
             val minimalBag = game.minimalBag()
