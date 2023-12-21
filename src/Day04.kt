@@ -69,63 +69,32 @@ fun main() {
         }
     }
 
-    fun part2Fast(input: List<String>): Int {
+    fun part2(input: List<String>): Int {
         val cardStack = input.map{ Card.create(it) }
             .map{ CardExtract.create(it)}
-        val countOfCards =  Array<Int>(cardStack.size){i -> 1}
+        val countOfCards =  Array<Int>(cardStack.size){ _ -> 1}
 
-        for (i in 0..<countOfCards.size) {
+        for (i in countOfCards.indices) {
             val card = cardStack[i]
             if (card.winCount > 0) {
                 //  increment the cards after the current card
-                val factor = countOfCards[i]
+                val currentCardCount = countOfCards[i]
                 for (j in 0 ..< card.winCount) {
-                    countOfCards[i + 1 + j] += factor
+                    countOfCards[i + 1 + j] += currentCardCount
                 }
             }
         }
         return countOfCards.sum()
     }
 
-    fun part2Slow(input: List<String>): Int {
-        // we need a function that th right additian cards after winning
-        // than we just move cards from the unused to the used stack, and put newly won cards into the used stack.
-        val cardStack = input.map{ Card.create(it) }
-            .map{ CardExtract.create(it)}
-        val unusedCards = cardStack.toMutableList()
-        // val usedCards = emptyList<CardExtract>().toMutableList()
-        var usedCardsCount = 0
-
-        while (unusedCards.isNotEmpty()) {
-            val card = unusedCards.removeFirst()  // get and remove first element
-            val nrNewCards = card.winCount
-            // usedCards.add(card)
-            usedCardsCount += 1
-            val newCards = cardStack.getNewCardsAfter(card, nrNewCards)
-            unusedCards.addAll(newCards)
-            if (usedCardsCount.mod(10000) == 0) {
-                println(usedCardsCount)
-            }
-        }
-        return usedCardsCount
-    }
-
     // test if implementation meets criteria from the description
     val testInput = readInput("Day04_test")
     check(part1(testInput) == 13)
 
-
     val input = readInput("Day04")
     part1(input).println()
 
-    check(part2Fast(testInput) == 30)
-    println("Part 2 Check done")
-
-    part2Fast(input).println()
-    // interupted after 1.520.000, need anther algorithm
+    check(part2(testInput) == 30)
+    part2(input).println()
 }
 
-private fun List<CardExtract>.getNewCardsAfter(card: CardExtract, nrNewCards: Int): List<CardExtract> {
-    val id = card.cardId
-    return this.subList(id, id + nrNewCards)
-}
